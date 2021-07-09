@@ -143,9 +143,9 @@ template<class _Ty>
 template<auto _Ty2, class ...Args>
 inline void Container<_Ty>::apply_foreach(Args &&... args) noexcept
 {
-	(static_cast<_Ty*>(this)->*(decltype(_Ty2))(_Ty2))(std::forward<Args>(args)...);
+	(static_cast<_Ty*>(this)->*_Ty2)(std::forward<Args>(args)...);
 	for (auto& [k, v] : m_children) {
-		(v.*(decltype(_Ty2))(_Ty2))(std::forward<Args>(args)...);
+		(v.*_Ty2)(std::forward<Args>(args)...);
 	}
 }
 
