@@ -22,4 +22,4 @@ Thanks to [@Tama-sama](https://github.com/Tama-sama) for various help( insane pr
 
 # License
 
-Under the MIT License, see LICENSE.txt for more information.
+Under the MIT License, see [LICENSE](https://github.com/dev1ous/Composite-like-leveraging-CRTP/blob/main/LICENSE) for more information.
