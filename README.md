@@ -1,0 +1,2 @@
+# Composite-like leveraging CRTP
+ 
