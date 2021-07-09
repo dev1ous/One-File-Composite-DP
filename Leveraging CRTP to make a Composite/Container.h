@@ -31,7 +31,7 @@ public:
 
 	////////////////////////////////////////////////////////////
 	/// \brief Adding a button to my container, constructed from a chunk of my base Button and the parameter list                         
-	/// Exemple : Button& derived = base.add("my_id",parameters...);
+	/// Example : Button& derived = base.add("my_id",parameters...);
 	/// 
 	/// \param everything is constructed in place with an id to access the button at runtime and a variadic parameter list
 	/// 
@@ -64,7 +64,7 @@ public:
 
 	////////////////////////////////////////////////////////////
 	/// \brief Apply a member function of my derived class to the base button and all his derived buttons                                      
-	/// Exemple : base.apply_foreach<&Button::my_member_function>(parameters...);
+	/// Example : base.apply_foreach<&Button::my_member_function>(parameters...);
 	///
 	/// \param a variadic parameter list where you can put the parameters of the function applied
 	////////////////////////////////////////////////////////////
