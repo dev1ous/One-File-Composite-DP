@@ -16,9 +16,9 @@ All examples on how to use this tool and the different functions are provided in
 
 # Credits
 
-Developed by @dev1ous
+Developed by [@dev1ous](https://github.com/dev1ous)
 
-Thanks to @Tama-sama for various help( insane programmer ) and @Predatorium for his help to extend the functions his the button class during our student project ( he's a coding machine ).
+Thanks to [@Tama-sama](https://github.com/Tama-sama) for various help( insane programmer ) and [@Predatorium](https://github.com/Predatorium) for his help to extend the functions his the button class during our student project ( he's a coding machine ).
 
 # License
 
