@@ -14,6 +14,11 @@
 #include "SFML/Graphics/Text.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wc++17-extensions"
+#elif _MSC_VER
+#endif
+
 template<class> 
 inline constexpr bool always_false_v = false;
 

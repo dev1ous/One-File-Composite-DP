@@ -8,9 +8,10 @@
 #include <algorithm>
 #include <vector>
 
-#if defined (_MSC_VER)
+#ifdef __clang__
+#elif _MSC_VER
 inline __declspec(noreturn) extern void fatal() {}
-#endif 
+#endif
 
 template<class _Ty>
 class Container
@@ -47,6 +48,7 @@ public:
 	/// \return a reference to the object corresponding to the id you gave or throw an exception with a message in the console 
 	////////////////////////////////////////////////////////////
 	_Ty& get(std::string_view)noexcept;
+
 
 	////////////////////////////////////////////////////////////
 	/// \brief Remove, at runtime, the object corresponding to the id you gave
@@ -117,7 +119,11 @@ inline _Ty& Container<_Ty>::get(std::string_view id)noexcept
 	{
 		std::cout << "Exception : " << e.what() << "\n";
 	}
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wreturn-type"
+#elif _MSC_VER
 	fatal();
+#endif
 }
 
 template<class _Ty>
@@ -137,9 +143,9 @@ template<class _Ty>
 template<auto _Ty2, class ...Args>
 inline void Container<_Ty>::apply_foreach(Args &&... args) noexcept
 {
-	(static_cast<_Ty*>(this)->*_Ty2)(std::forward<Args>(args)...);
+	(static_cast<_Ty*>(this)->*(decltype(_Ty2))(_Ty2))(std::forward<Args>(args)...);
 	for (auto& [k, v] : m_children) {
-		(v.*_Ty2)(std::forward<Args>(args)...);
+		(v.*(decltype(_Ty2))(_Ty2))(std::forward<Args>(args)...);
 	}
 }
 
