@@ -22,12 +22,14 @@ public:
 	////////////////////////////////////////////////////////////
 	using my_vec = std::vector<std::pair<std::string, _Ty >>;
 
-	////////////////////////////////////////////////////////////
-	/// \brief alias for convenient access to my pair
-	////////////////////////////////////////////////////////////
-	using my_pair = std::pair<std::string, _Ty>;
-
 	explicit constexpr Container(_Ty* __p = nullptr)noexcept :m_parent(__p) {}
+
+	////////////////////////////////////////////////////////////
+	/// \brief custom comparator for my functions get() and remove() to gain some lisibity in the code
+	////////////////////////////////////////////////////////////
+	constexpr auto comparator(std::string_view __s) {
+		return [&__s](auto const& __p) {return __p.first == __s; };
+	}
 
 	////////////////////////////////////////////////////////////
 	/// \brief Adding a button to my container, constructed from a chunk of my base Button and the parameter list                         
@@ -109,8 +111,7 @@ template<class _Ty>
 inline _Ty& Container<_Ty>::get(std::string_view id)noexcept
 {
 	try {
-		if (auto x = std::find_if(std::begin(m_children), std::end(m_children), [id](my_pair const& b) {
-			return b.first == id; }); x != std::end(m_children))
+		if (auto x = std::find_if(std::begin(m_children), std::end(m_children), comparator(id)); x != std::end(m_children))
 			return x->second;
 		else
 			throw std::range_error("didnt find the id of your object");
@@ -129,8 +130,7 @@ inline _Ty& Container<_Ty>::get(std::string_view id)noexcept
 template<class _Ty>
 inline void Container<_Ty>::remove(std::string_view id)noexcept
 {
-	m_children.erase(std::remove_if(std::begin(m_children), std::end(m_children), [id](my_pair const& k) {
-		return k.first == id; }), std::end(m_children));
+	m_children.erase(std::remove_if(std::begin(m_children), std::end(m_children), comparator(id)), std::end(m_children));
 }
 
 template<class _Ty>

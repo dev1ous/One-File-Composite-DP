@@ -45,7 +45,7 @@ public:
 	////////////////////////////////////////////////////////////
 	template<class _Ty, class _Ty2 = sf::Text, class = std::enable_if_t<std::is_convertible_v<_Ty, shape_t>>>
 	explicit Button(_Ty&& _shapes, _Ty2&& _text = sf::Text(), Button* _parent = nullptr)noexcept :
-		CI_button(_parent), m_shapes{ std::forward<_Ty>(_shapes) }, m_text{ std::forward<_Ty2>(_text) } {};
+		CI_button(_parent), m_shapes(std::forward<_Ty>(_shapes)), m_text(std::forward<_Ty2>(_text)) {};
 
 	~Button() = default;
 
