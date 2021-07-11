@@ -101,8 +101,3 @@ private:
 	bool m_choose{ false };
 };
 #endif
-
-
-
-
-

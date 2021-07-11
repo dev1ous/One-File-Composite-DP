@@ -18,7 +18,7 @@ int main()
 	//you can switch color or texture if you hold, click or do nothing with the button. You can also just put 3 same colors to have no particular state switch
 	MartinEstLeMeilleur.set_color_state(sf::Color::White, sf::Color::White, sf::Color::White).set_position({ 500.f,500.f });
 
-	button.get("martin").set_color_state(sf::Color::Blue,sf::Color::Blue,sf::Color::Blue);
+	button.get("martin").set_color_state(sf::Color::Blue, sf::Color::Blue, sf::Color::Blue);
 
 	while (App.isOpen())
 	{

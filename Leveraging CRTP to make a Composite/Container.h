@@ -148,11 +148,3 @@ inline void Container<_Ty>::apply_foreach(Args &&... args) noexcept
 		(v.*_Ty2)(std::forward<Args>(args)...);
 	}
 }
-
-
-
-
-
-
-
-
