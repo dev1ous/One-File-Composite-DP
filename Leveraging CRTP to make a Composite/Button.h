@@ -56,7 +56,7 @@ public:
 	////////////////////////////////////////////////////////////
 	/// \return True if the cursor of your mouse is in the button, False otherwise
 	////////////////////////////////////////////////////////////
-	constexpr bool mouse_in_button(sf::RenderWindow const& window) noexcept {
+	constexpr bool mouse_in_button(sf::RenderWindow const& window)const noexcept {
 		return std::visit([&window](auto&& args) { 
 			return args.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))); }, m_shapes);
 	}

@@ -27,7 +27,7 @@ public:
 	////////////////////////////////////////////////////////////
 	/// \brief custom comparator for my functions get() and remove() to gain some lisibity in the code
 	////////////////////////////////////////////////////////////
-	constexpr auto comparator(std::string_view __s) {
+	constexpr auto comparator(std::string_view __s)const noexcept {
 		return [&__s](auto const& __p) {return __p.first == __s; };
 	}
 
