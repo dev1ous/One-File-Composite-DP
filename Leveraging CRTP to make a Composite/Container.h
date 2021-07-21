@@ -53,12 +53,12 @@ public:
 	constexpr void remove(std::string_view) noexcept;
 
 	////////////////////////////////////////////////////////////
-	/// \brief Remove the base button and all his derived buttons
+	/// \brief Remove all elements of my container, the derived objects
 	////////////////////////////////////////////////////////////
 	constexpr void clear() noexcept;
 
 	////////////////////////////////////////////////////////////
-	/// \brief Apply a member function of my derived class to the base button and all his derived buttons
+	/// \brief Apply a member function of my derived class to the base object and all his derived objects
 	/// Example : base.apply_foreach(&Button::my_member_function, parameters...);
 	///
 	/// \param a variadic parameter list where you can put the parameters of the function applied
