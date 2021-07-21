@@ -73,7 +73,7 @@ void Button::process_events(sf::Event const& e)noexcept
 	}
 
 	//recursive call before the creation of the function "apply_foreach" in the base class
-	/*std::for_each(std::begin(get_childs()), std::end(get_childs()), [e](pair& h) {h.second.process_events(e); });*/
+	//std::for_each(std::begin(get_childs()), std::end(get_childs()), [e](auto& h) {h.second->process_events(e); });
 }
 
 void Button::select()noexcept
@@ -112,7 +112,7 @@ void Button::desactivate()noexcept
 
 void Button::draw(sf::RenderWindow& window)const noexcept
 {
-	std::visit([&window](auto&& args) { window.draw(args); }, m_shapes);
+	std::visit([&](auto&& args) { window.draw(args); }, m_shapes);
 	window.draw(m_text);
 }
 
@@ -128,7 +128,7 @@ void Button::set_texture(sf::Texture const& path)noexcept
 		else if constexpr (std::is_same_v<_Ty, sf::Sprite>) 
 			args.setTexture(path);
 		else
-			static_assert(always_false_v<_Ty>, "Wrong type entered for setTexture of your Button");
+			static_assert(std::_Always_false<_Ty>, "Wrong type entered for setTexture of your Button");
 		}, m_shapes);
 }
 
@@ -163,7 +163,7 @@ Button& Button::resize() noexcept
 			else if constexpr (std::is_same_v<_Ty, sf::ConvexShape> || std::is_same_v<_Ty, sf::Sprite>)
 				args.setTextureRect(sf::IntRect(0, 0, static_cast<int>(m_current_texture.x), static_cast<int>(m_current_texture.y)));
 			else
-				static_assert(always_false_v<_Ty>, "Wrong type entered for resize of your Button");
+				static_assert(std::_Always_false<_Ty>, "Wrong type entered for resize of your Button");
 			}, m_shapes);
 	}
 
@@ -182,13 +182,13 @@ void Button::change_default_color(sf::Color const& col)noexcept
 		else if constexpr (std::is_same_v<_Ty, sf::Sprite>)
 			args.setColor(col);
 		else
-			static_assert(always_false_v<_Ty>, "Wrong type entered for change_default_color of your Button");
+			static_assert(std::_Always_false<_Ty>, "Wrong type entered for change_default_color of your Button");
 		}, m_shapes);
 }
 
 Button& Button::set_position(sf::Vector2f const& pos)noexcept
 {
-	std::visit([pos](auto&& args) { args.setPosition(pos); }, m_shapes);
+	std::visit([&](auto&& args) { args.setPosition(pos); }, m_shapes);
 	return *this;
 }
 
@@ -201,7 +201,7 @@ Button& Button::set_origin() noexcept
 
 Button& Button::set_rotation(float rota) noexcept
 {
-	std::visit([rota](auto&& args) { args.setRotation(rota); }, m_shapes);
+	std::visit([=](auto&& args) { args.setRotation(rota); }, m_shapes);
 
 	return *this;
 }
@@ -211,6 +211,12 @@ Button& Button::set_string(std::string const& str) noexcept
 	m_text.setString(str);
 
 	return *this;
+}
+
+bool Button::mouse_in_button(sf::RenderWindow const& window) const noexcept
+{
+	return std::visit([&window](auto&& args) {
+		return args.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))); }, m_shapes);
 }
 
 sf::Vector2f Button::get_position()const noexcept

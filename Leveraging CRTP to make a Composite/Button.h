@@ -19,9 +19,6 @@
 #elif _MSC_VER
 #endif
 
-template<class> 
-inline constexpr bool always_false_v = false;
-
 class Button : public Container<Button>// must be publicly inherited ! 
 {
 public:
@@ -43,8 +40,9 @@ public:
 	/// \param Params left are just perfectly forwarded to let the compiler optimize as he wants
 	///
 	////////////////////////////////////////////////////////////
-	template<class _Ty, class _Ty2 = sf::Text, class = std::enable_if_t<std::is_convertible_v<_Ty, shape_t>>>
-	explicit Button(_Ty&& _shapes, _Ty2&& _text = sf::Text(), Button* _parent = nullptr)noexcept :
+	template<class _Ty, class _Ty2 = sf::Text>
+	requires std::is_convertible_v<_Ty, shape_t>
+		explicit Button(_Ty&& _shapes, _Ty2&& _text = {}, Button* _parent = nullptr)noexcept :
 		CI_button(_parent), m_shapes(std::forward<_Ty>(_shapes)), m_text(std::forward<_Ty2>(_text)) {};
 
 	~Button() = default;
@@ -56,10 +54,7 @@ public:
 	////////////////////////////////////////////////////////////
 	/// \return True if the cursor of your mouse is in the button, False otherwise
 	////////////////////////////////////////////////////////////
-	constexpr bool mouse_in_button(sf::RenderWindow const& window)const noexcept {
-		return std::visit([&window](auto&& args) { 
-			return args.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))); }, m_shapes);
-	}
+	bool mouse_in_button(sf::RenderWindow const& window)const noexcept;
 	sf::Vector2f get_position()const noexcept;
 	sf::FloatRect get_globalbounds()const noexcept;
 
