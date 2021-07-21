@@ -10,8 +10,9 @@ All examples on how to use this tool and the different functions are provided in
 
 # Requirements
 
-* You need a compiler who support C++17 language features and put the language standard on it in properties.
-* It has been tested on Clang and the latest version of MSVC to date.
+* Please, download the latest version available of Microsoft Visual Studio.
+* You need a compiler who support cpp latest language features and put the language standard on it in "Properties".
+* It has been tested on clang 12.0.1 and MSVC 14.29.30037 versions.
 * You can include the SFML too, if you want to use the button class
 
 # Credits
