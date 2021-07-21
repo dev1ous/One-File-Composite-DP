@@ -41,7 +41,7 @@ public:
 	/// 
 	/// \param the id of your object
 	/// 
-	/// \return a reference to the object corresponding to the id you gave or throw an exception with a message in the console 
+	/// \return a reference to the object corresponding to the id you gave or throw an exception 
 	////////////////////////////////////////////////////////////
 	[[nodiscard]] constexpr _Ty& get(std::string_view) const;
 
