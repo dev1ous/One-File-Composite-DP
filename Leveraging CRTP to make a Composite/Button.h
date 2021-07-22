@@ -45,8 +45,6 @@ public:
 		explicit Button(_Ty&& _shapes, _Ty2&& _text = {}, Button* _parent = nullptr)noexcept :
 		CI_button(_parent), m_shapes(std::forward<_Ty>(_shapes)), m_text(std::forward<_Ty2>(_text)) {};
 
-	~Button() = default;
-
 	void create_function_call(std::function<void()>)noexcept;
 	void process_events(sf::Event const&)noexcept;
 	void draw(sf::RenderWindow&)const noexcept;
