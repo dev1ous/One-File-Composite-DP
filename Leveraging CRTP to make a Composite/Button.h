@@ -28,22 +28,17 @@ public:
 	////////////////////////////////////////////////////////////
 	/// \brief Default constructor
 	///
-	/// Create an empty button and my upcasting pointer with default argument.
-	///
 	////////////////////////////////////////////////////////////
-	Button(Button* _parent = nullptr)noexcept :CI_button(_parent) {};
+	Button(Button* _parent = nullptr) noexcept :CI_button{ _parent } {}
 
 	////////////////////////////////////////////////////////////
 	/// \brief Create a button from this list of arguments
 	///
 	/// \param i must initialize my upcast pointer firstly but i put the parameter at the end of the list with a default argument to don't have to be bothered with him when i instantiate my constructor
-	/// \param Params left are just perfectly forwarded to let the compiler optimize as he wants
 	///
 	////////////////////////////////////////////////////////////
-	template<class _Ty, class _Ty2 = sf::Text>
-	requires std::is_convertible_v<_Ty, shape_t>
-		explicit Button(_Ty&& _shapes, _Ty2&& _text = {}, Button* _parent = nullptr)noexcept :
-		CI_button(_parent), m_shapes(std::forward<_Ty>(_shapes)), m_text(std::forward<_Ty2>(_text)) {};
+	explicit Button(make<shape_t> _shape_in, make<sf::Text> _text_in = sf::Text(), Button* _parent = nullptr) noexcept :
+		CI_button{ _parent }, m_shapes{ _shape_in() }, m_text{ _text_in() }{}
 
 	void create_function_call(std::function<void()>)noexcept;
 	void process_events(sf::Event const&)noexcept;
@@ -52,7 +47,7 @@ public:
 	////////////////////////////////////////////////////////////
 	/// \return True if the cursor of your mouse is in the button, False otherwise
 	////////////////////////////////////////////////////////////
-	bool mouse_in_button(sf::RenderWindow const& window)const noexcept;
+	bool mouse_in_button(sf::RenderWindow const&)const noexcept;
 	sf::Vector2f get_position()const noexcept;
 	sf::FloatRect get_globalbounds()const noexcept;
 

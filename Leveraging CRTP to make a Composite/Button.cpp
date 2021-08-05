@@ -7,9 +7,7 @@ void Button::create_function_call(std::function<void()> onClick)noexcept
 
 void Button::process_events(sf::Event const& e)noexcept
 {
-	sf::FloatRect rect;
-
-	std::visit([&rect](auto&& args) { rect = args.getGlobalBounds(); }, m_shapes);
+	auto rect = std::visit([](auto&& args) { return args.getGlobalBounds(); }, m_shapes);
 
 	switch (e.type)
 	{
@@ -73,7 +71,7 @@ void Button::process_events(sf::Event const& e)noexcept
 	}
 
 	//recursive call before the creation of the function "apply_foreach" in the base class
-	//std::for_each(std::begin(get_childs()), std::end(get_childs()), [e](auto& h) {h.second->process_events(e); });
+	/*std::for_each(std::begin(get_childs()), std::end(get_childs()), [e](auto& h) {h.second->process_events(e); });*/
 }
 
 void Button::select()noexcept
@@ -251,9 +249,9 @@ void Button::force_activation()noexcept
 
 void Button::center_text()noexcept
 {
-	sf::FloatRect rect = m_text.getLocalBounds();
-
-	std::visit([this, &rect](auto&& args) { m_text.setOrigin(rect.left + rect.width / 2.f, rect.top + rect.height / 2.f);
-	m_text.setPosition(args.getPosition()); }, m_shapes);
+	std::visit([this](auto&& args) {
+		auto rect = m_text.getLocalBounds();
+		m_text.setOrigin(rect.left + rect.width / 2.f, rect.top + rect.height / 2.f);
+		m_text.setPosition(args.getPosition()); }, m_shapes);
 }
 
