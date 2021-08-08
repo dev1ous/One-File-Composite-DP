@@ -1,5 +1,5 @@
 #include "Button.h"
-
+#include <iostream>
 //TEST
 
 int main()
@@ -11,27 +11,28 @@ int main()
 	sf::Texture t;
 	t.loadFromFile("../Ressources/golden.png");
 	//parent
-	Button button(sf::RectangleShape(sf::Vector2f(20, 20)));
-	button.set_color_state(sf::Color::White, sf::Color::White, sf::Color::White);
+	Button button(sf::RectangleShape({ 20.f, 20.f }));
+	button.change_default_color(sf::Color::White);
 	//child( my frankestein monster :) dont forget to put a reference if you don't want to slice the object)
-	Button& MartinEstLeMeilleur = button.add("martin", sf::CircleShape(10), sf::Text());
-	MartinEstLeMeilleur.set_color_state(sf::Color::White, sf::Color::White, sf::Color::White);
+	Button& MartinEstLeMeilleur = button.add("martin", sf::CircleShape(10));
+	MartinEstLeMeilleur.change_default_color(sf::Color::Blue);
 
-	Button& JeSuisTropChaud = button.add("lebossquoi", sf::CircleShape(50),sf::Text());
+	Button& JeSuisTropChaud = button.add("lebossquoi", sf::CircleShape(50));
 	//you can switch color or texture if you hold, click or do nothing with the button. You can also just put 3 same colors to have no particular state switch
-	JeSuisTropChaud.set_color_state(sf::Color::Red, sf::Color::Red, sf::Color::Red).set_position({ 800.f,800.f });
+	JeSuisTropChaud.change_default_color(sf::Color::Red);
+	JeSuisTropChaud.set_position({ 800.f,800.f });
 
 	button.get("martin").set_position({900.f,900.f});
-	button.get("martin").set_color_state(sf::Color::Blue, sf::Color::Blue, sf::Color::Blue);
-	button.get("lebossquoi").set_color_state(sf::Color::Green, sf::Color::Magenta, sf::Color::Cyan);
 	button.get("lebossquoi").create_function_call([]() { std::cout << "aurelia" << "\n"; });
 
-	button.remove("martin");
 	while (App.isOpen())
 	{
 		for (auto e = sf::Event{}; App.pollEvent(e);) {
 			button.apply_foreach(&Button::process_events, e);
 		}
+
+		button.set_color_state(sf::Color::Red, sf::Color::Cyan, sf::Color::Magenta);
+
 		App.clear();
 		button.apply_foreach(&Button::draw, App);
 		App.display();

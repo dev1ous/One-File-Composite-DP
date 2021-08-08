@@ -2,8 +2,8 @@
 #define BUTTON_H
 
 #include "Container.h"
-#include <functional>
 #include <array>
+#include <functional>
 #include "SFML/Graphics/Texture.hpp"  // for Texture (ptr only)
 #include <variant>
 #include "SFML/Window/Event.hpp"
@@ -23,60 +23,63 @@ class Button : public Container<Button>// must be publicly inherited !
 {
 public:
 	using shape_t = std::variant <sf::RectangleShape, sf::CircleShape, sf::ConvexShape, sf::Sprite>;//can be extended if you want
-	using CI_button = Container<Button>;
 
 	////////////////////////////////////////////////////////////
 	/// \brief Default constructor
 	///
 	////////////////////////////////////////////////////////////
-	Button(Button* _parent = nullptr) noexcept :CI_button{ _parent } {}
+	Button() = default;
 
 	////////////////////////////////////////////////////////////
 	/// \brief Create a button from this list of arguments
 	///
-	/// \param i must initialize my upcast pointer firstly but i put the parameter at the end of the list with a default argument to don't have to be bothered with him when i instantiate my constructor
+	////////////////////////////////////////////////////////////
+	explicit Button(Button* _parent, shape_t const& _shape_in, sf::Text const& _text_in = {}) noexcept :
+		Container<Button>(_parent), m_shapes{ _shape_in }, m_text{ _text_in }{}
+	////////////////////////////////////////////////////////////
+	/// \brief Create a button from this list of arguments
 	///
 	////////////////////////////////////////////////////////////
-	explicit Button(make<shape_t> _shape_in, make<sf::Text> _text_in = sf::Text(), Button* _parent = nullptr) noexcept :
-		CI_button{ _parent }, m_shapes{ _shape_in() }, m_text{ _text_in() }{}
+	Button(shape_t const& _shape_in, sf::Text const& _text_in = {}) noexcept :
+		m_shapes{ _shape_in }, m_text{ _text_in }{}
 
 	void create_function_call(std::function<void()>)noexcept;
-	void process_events(sf::Event const&)noexcept;
-	void draw(sf::RenderWindow&)const noexcept;
+	void process_events(sf::Event const&);
+	void draw(sf::RenderWindow&)const;
 
 	////////////////////////////////////////////////////////////
 	/// \return True if the cursor of your mouse is in the button, False otherwise
 	////////////////////////////////////////////////////////////
-	bool mouse_in_button(sf::RenderWindow const&)const noexcept;
+	bool mouse_in_button(sf::RenderWindow const&)const;
 	sf::Vector2f get_position()const noexcept;
 	sf::FloatRect get_globalbounds()const noexcept;
 
 	//Chaining functions for convenience
 
-	Button& set_color_state(sf::Color const&, sf::Color const&, sf::Color const&)noexcept;
-	Button& set_texture_state(sf::Texture const&, sf::Texture const&, sf::Texture const&)noexcept;
-	Button& set_position(sf::Vector2f const&)noexcept;
-	Button& set_origin()noexcept;
-	Button& set_rotation(float)noexcept;
-	Button& set_string(std::string const&)noexcept;
+	Button& set_color_state(sf::Color const&, sf::Color const&, sf::Color const&);
+	Button& set_texture_state(sf::Texture const&, sf::Texture const&, sf::Texture const&);
+	Button& set_position(sf::Vector2f const&);
+	Button& set_origin();
+	Button& set_rotation(float);
+	Button& set_string(std::string const&);
 
-	Button& resize()noexcept;
+	Button& resize();
 
-	void center_text()noexcept;
+	void change_default_color(sf::Color const&);
+	void set_texture(sf::Texture const&);
 
-	void force_hover()noexcept;
-	void desactivate_hover()noexcept;
-	void force_activation()noexcept;
+	void center_text() noexcept;
+
+	void force_hover() noexcept;
+	void desactivate_hover() noexcept;
+	void force_activation() noexcept;
 
 private:
 
-	void change_default_color(sf::Color const&)noexcept;
-	void set_texture(sf::Texture const&)noexcept;
-
-	void select()noexcept;
-	void deselect()noexcept;
-	void activate()noexcept;
-	void desactivate()noexcept;
+	void select();
+	void deselect();
+	void activate();
+	void desactivate();
 
 	shape_t m_shapes;
 	sf::Text m_text;

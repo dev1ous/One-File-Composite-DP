@@ -1,49 +1,8 @@
 #ifndef CONTAINER_H
 #define CONTAINER_H
 
-#include <utility>                // for pair
-#include <any>
-#include <tuple>
+#include <stdexcept>
 #include <memory>
-
-template<class _Ty>
-struct make {
-	using maker_t = _Ty(*)(std::any);
-
-	template<class Tuple>
-	static constexpr maker_t make_tuple_maker() {
-		return [](std::any vtup)->_Ty {
-			return std::make_from_tuple<_Ty>(std::forward<Tuple>(std::any_cast<std::remove_reference_t<Tuple>&>(vtup)));
-		};
-	}
-
-	template<class U>
-	static constexpr maker_t make_element_maker() {
-		return [](std::any velem)->_Ty {
-			return _Ty{ std::forward<U>(std::any_cast<std::remove_reference_t<U>&>(velem)) };
-		};
-	}
-
-	std::any m_ptr{};
-	maker_t m_maker{ nullptr };
-
-	template<class U>
-	requires std::is_constructible_v<_Ty, U> && !std::is_same_v<std::remove_cvref_t<U>, make>
-		constexpr make(U&& u) : m_ptr{ std::make_any<U>(u) }, m_maker{ make_element_maker<U>() }{}
-
-	template<class Tuple>
-	requires !std::is_constructible_v<_Ty, Tuple> && !std::is_same_v<std::remove_cvref_t<Tuple>, make>
-		&& (0 <= std::tuple_size_v<std::remove_reference_t<Tuple>>)
-		constexpr make(Tuple&& tup) : m_ptr{ std::make_any<Tuple>(tup) }, m_maker{ make_tuple_maker<Tuple>() }{}
-
-
-	constexpr _Ty operator()()const {
-		return m_maker(m_ptr);
-	}
-};
-
-#include "stdexcept"              // for range_error
-#include <iostream>
 #include <algorithm>
 #include <vector>
 #include <ranges>
@@ -63,7 +22,7 @@ public:
 	////////////////////////////////////////////////////////////
 	using my_vec = std::vector<std::pair<std::string, std::unique_ptr<_Ty >>>;
 
-	explicit constexpr Container(_Ty* __p = nullptr) noexcept :m_parent{ __p } {}
+	explicit constexpr Container(_Ty* __p = nullptr) noexcept :m_parent(__p) {}
 
 	////////////////////////////////////////////////////////////
 	/// \brief Adding a derived object to my container, constructed from a chunk of my derived class freshly created (not in the vector) and the parameter list                                                                                                    
@@ -76,17 +35,7 @@ public:
 	////////////////////////////////////////////////////////////
 	template<class ...Args>
 	[[nodiscard]] constexpr _Ty& add(std::string_view, Args && ...args) noexcept;
-	/*template<class ...Args>
-	[[nodiscard]] constexpr _Ty& add(std::string_view id, Args&&...args) {
-		return temp_func(id, std::forward_as_tuple(args...),
-			std::make_index_sequence < sizeof...(args) - 1>{});
-	}
-	template<class Ts>
-	[[nodiscard]] constexpr _Ty& add(std::string_view id, Ts&& args, Container<_Ty>* _this) {
-		m_children.emplace_back(std::piecewise_construct, std::forward_as_tuple(id),
-			std::forward_as_tuple(std::make_unique<_Ty>(std::forward<Ts>(args), static_cast<_Ty*>(_this))));
-		return *m_children.back().second;
-	}*/
+	
 	////////////////////////////////////////////////////////////
 	/// \brief Give you the access to a derived object in your container
 	/// 
@@ -119,7 +68,7 @@ public:
 
 protected:
 
-	constexpr ~Container() = default;
+	~Container() = default;
 
 	////////////////////////////////////////////////////////////
 	/// \return Access to an editable view of the container
@@ -133,24 +82,10 @@ protected:
 	[[nodiscard]] constexpr _Ty* get_parent()noexcept { return m_parent; }
 
 private:
-
-	/*template<class Dummy = _Ty, class ...Args>
-	[[nodiscard]] constexpr Dummy& temp_func(std::string_view id, Container<Dummy>* _this, Args const&... args) {
-		m_children.emplace_back(std::piecewise_construct, std::forward_as_tuple(id),
-			std::forward_as_tuple(std::make_unique<Dummy>(std::forward<Args>(args)..., static_cast<Dummy*>(_this))));
-		return *m_children.back().second;
-	}
-
-	template<class...Args, std::size_t...Indexes>
-	[[nodiscard]] constexpr _Ty& temp_func(std::string_view id, std::tuple<Args...> args_then_constructor, std::index_sequence<Indexes...>) {
-		auto constexpr constructor_index = sizeof...(Args) - 1;
-		return temp_func(id, std::get<constructor_index>(args_then_constructor),
-			&std::get<Indexes>(args_then_constructor)...);
-	}*/
 	////////////////////////////////////////////////////////////
 	/// Data Members
 	////////////////////////////////////////////////////////////
-	_Ty* m_parent;
+	_Ty* m_parent{ nullptr };
 	my_vec m_children{};
 };
 
@@ -161,7 +96,7 @@ template<class ...Args>
 inline constexpr _Ty& Container<_Ty>::add(std::string_view id, Args && ...args) noexcept
 {
 	m_children.emplace_back(std::piecewise_construct, std::forward_as_tuple(id),
-		std::forward_as_tuple(std::make_unique<_Ty>(std::forward<Args>(args)..., static_cast<_Ty*>(this))));
+		std::forward_as_tuple(std::make_unique<_Ty>(static_cast<_Ty*>(this), std::forward<Args>(args)...)));
 	return *m_children.back().second;
 }
 

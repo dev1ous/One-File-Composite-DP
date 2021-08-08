@@ -5,7 +5,7 @@ void Button::create_function_call(std::function<void()> onClick)noexcept
 	m_click = std::move(onClick);
 }
 
-void Button::process_events(sf::Event const& e)noexcept
+void Button::process_events(sf::Event const& e)
 {
 	auto rect = std::visit([](auto&& args) { return args.getGlobalBounds(); }, m_shapes);
 
@@ -74,7 +74,7 @@ void Button::process_events(sf::Event const& e)noexcept
 	/*std::for_each(std::begin(get_childs()), std::end(get_childs()), [e](auto& h) {h.second->process_events(e); });*/
 }
 
-void Button::select()noexcept
+void Button::select()
 {
 	if (!m_choose)
 		change_default_color(std::get<1>(m_col));
@@ -82,7 +82,7 @@ void Button::select()noexcept
 		set_texture(std::get<1>(m_filepath));
 }
 
-void Button::deselect()noexcept
+void Button::deselect()
 {
 	if (!m_choose)
 		change_default_color(std::get<0>(m_col));
@@ -90,7 +90,7 @@ void Button::deselect()noexcept
 		set_texture(std::get<0>(m_filepath));
 }
 
-void Button::activate()noexcept
+void Button::activate()
 {
 	if (!m_choose)
 		change_default_color(std::get<2>(m_col));
@@ -100,7 +100,7 @@ void Button::activate()noexcept
 		m_click();
 }
 
-void Button::desactivate()noexcept
+void Button::desactivate()
 {
 	if (!m_choose)
 		change_default_color(std::get<1>(m_col));
@@ -108,15 +108,17 @@ void Button::desactivate()noexcept
 		set_texture(std::get<1>(m_filepath));
 }
 
-void Button::draw(sf::RenderWindow& window)const noexcept
+void Button::draw(sf::RenderWindow& window)const
 {
 	std::visit([&](auto&& args) { window.draw(args); }, m_shapes);
 	window.draw(m_text);
 }
 
-void Button::set_texture(sf::Texture const& path)noexcept
+void Button::set_texture(sf::Texture const& path)
 {
 	m_choose = true;
+
+	std::ranges::fill(m_filepath, path);
 
 	std::visit([&path](auto&& args) {
 		using _Ty = std::decay_t<decltype(args)>;
@@ -130,7 +132,7 @@ void Button::set_texture(sf::Texture const& path)noexcept
 		}, m_shapes);
 }
 
-Button& Button::set_color_state(sf::Color const& noMouseOn, sf::Color const& mouseMovedOn, sf::Color const& mouseClickedOn)noexcept
+Button& Button::set_color_state(sf::Color const& noMouseOn, sf::Color const& mouseMovedOn, sf::Color const& mouseClickedOn)
 {
 	m_choose = false;
 	std::get<0>(m_col) = noMouseOn;
@@ -139,7 +141,7 @@ Button& Button::set_color_state(sf::Color const& noMouseOn, sf::Color const& mou
 	return *this;
 }
 
-Button& Button::set_texture_state(sf::Texture const& noMouseOn, sf::Texture const& mouseMovedOn, sf::Texture const& mouseClickedOn) noexcept
+Button& Button::set_texture_state(sf::Texture const& noMouseOn, sf::Texture const& mouseMovedOn, sf::Texture const& mouseClickedOn)
 {
 	m_choose = true;
 	std::get<0>(m_filepath) = noMouseOn;
@@ -148,7 +150,7 @@ Button& Button::set_texture_state(sf::Texture const& noMouseOn, sf::Texture cons
 	return *this;
 }
 
-Button& Button::resize() noexcept
+Button& Button::resize()
 {
 	if (m_choose)
 	{
@@ -168,9 +170,11 @@ Button& Button::resize() noexcept
 	return *this;
 }
 
-void Button::change_default_color(sf::Color const& col)noexcept
+void Button::change_default_color(sf::Color const& col)
 {
 	m_choose = false;
+
+	std::ranges::fill(m_col, col);
 
 	std::visit([&col](auto&& args) {
 		using _Ty = std::decay_t<decltype(args)>;
@@ -184,34 +188,34 @@ void Button::change_default_color(sf::Color const& col)noexcept
 		}, m_shapes);
 }
 
-Button& Button::set_position(sf::Vector2f const& pos)noexcept
+Button& Button::set_position(sf::Vector2f const& pos)
 {
 	std::visit([&](auto&& args) { args.setPosition(pos); }, m_shapes);
 	return *this;
 }
 
-Button& Button::set_origin() noexcept
+Button& Button::set_origin()
 {
 	std::visit([](auto&& args) { args.setOrigin(args.getGlobalBounds().width / 2.f, args.getGlobalBounds().height / 2.f); }, m_shapes);
 
 	return *this;
 }
 
-Button& Button::set_rotation(float rota) noexcept
+Button& Button::set_rotation(float rota) 
 {
 	std::visit([=](auto&& args) { args.setRotation(rota); }, m_shapes);
 
 	return *this;
 }
 
-Button& Button::set_string(std::string const& str) noexcept
+Button& Button::set_string(std::string const& str)
 {
 	m_text.setString(str);
 
 	return *this;
 }
 
-bool Button::mouse_in_button(sf::RenderWindow const& window) const noexcept
+bool Button::mouse_in_button(sf::RenderWindow const& window) const
 {
 	return std::visit([&window](auto&& args) {
 		return args.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))); }, m_shapes);
@@ -227,17 +231,17 @@ sf::FloatRect Button::get_globalbounds()const noexcept
 	return std::visit([](auto&& args) {return args.getGlobalBounds(); }, m_shapes);
 }
 
-void Button::force_hover()noexcept
+void Button::force_hover() noexcept
 {
 	select();
 }
 
-void Button::desactivate_hover()noexcept
+void Button::desactivate_hover() noexcept
 {
 	deselect();
 }
 
-void Button::force_activation()noexcept
+void Button::force_activation() noexcept
 {
 	if (m_click) {
 		//play your music here
@@ -247,7 +251,7 @@ void Button::force_activation()noexcept
 	desactivate();
 }
 
-void Button::center_text()noexcept
+void Button::center_text() noexcept
 {
 	std::visit([this](auto&& args) {
 		auto rect = m_text.getLocalBounds();
