@@ -121,7 +121,7 @@ void Button::set_texture(sf::Texture const& path)
 	std::ranges::fill(m_filepath, path);
 
 	std::visit([&path](auto&& args) {
-		using _Ty = std::decay_t<decltype(args)>;
+		using _Ty = std::remove_cvref_t<decltype(args)>;
 		if constexpr (std::is_same_v<_Ty, sf::RectangleShape> || std::is_same_v<_Ty, sf::CircleShape>
 			|| std::is_same_v<_Ty, sf::ConvexShape>)
 			args.setTexture(&path);
@@ -155,7 +155,7 @@ Button& Button::resize()
 	if (m_choose)
 	{
 		std::visit([this](auto&& args) {
-			using _Ty = std::decay_t<decltype(args)>;
+			using _Ty = std::remove_cvref_t<decltype(args)>;
 			if constexpr (std::is_same_v<_Ty, sf::RectangleShape>)
 				args.setSize(m_current_texture);
 			else if constexpr (std::is_same_v<_Ty, sf::CircleShape>)
@@ -177,7 +177,7 @@ void Button::change_default_color(sf::Color const& col)
 	std::ranges::fill(m_col, col);
 
 	std::visit([&col](auto&& args) {
-		using _Ty = std::decay_t<decltype(args)>;
+		using _Ty = std::remove_cvref_t<decltype(args)>;
 		if constexpr (std::is_same_v<_Ty, sf::RectangleShape> || std::is_same_v<_Ty, sf::CircleShape>
 			|| std::is_same_v<_Ty, sf::ConvexShape>)
 			args.setFillColor(col);
