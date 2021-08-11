@@ -3,9 +3,9 @@
 
 #include "Container.h"
 #include <array>
+#include <variant>
 #include <functional>
 #include "SFML/Graphics/Texture.hpp"  // for Texture (ptr only)
-#include <variant>
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics/CircleShape.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
@@ -36,12 +36,22 @@ public:
 	////////////////////////////////////////////////////////////
 	explicit Button(Button* _parent, shape_t const& _shape_in, sf::Text const& _text_in = {}) noexcept :
 		Container<Button>(_parent), m_shapes{ _shape_in }, m_text{ _text_in }{}
+	explicit Button(Button* _parent, shape_t&& _shape_in, sf::Text&& _text_in = {}) noexcept :
+		Container<Button>(_parent), m_shapes{ std::move(_shape_in) }, m_text{ std::move(_text_in) }{}
+	explicit Button(Button* _parent, sf::Text const& _text_in) noexcept :
+		Container<Button>(_parent), m_text{ _text_in }{}
+	explicit Button(Button* _parent, sf::Text&& _text_in) noexcept :
+		Container<Button>(_parent), m_text{ std::move(_text_in) }{}
 	////////////////////////////////////////////////////////////
 	/// \brief Create a button from this list of arguments
 	///
 	////////////////////////////////////////////////////////////
 	Button(shape_t const& _shape_in, sf::Text const& _text_in = {}) noexcept :
 		m_shapes{ _shape_in }, m_text{ _text_in }{}
+	Button(shape_t&& _shape_in, sf::Text&& _text_in = {}) noexcept :
+		m_shapes{ std::move(_shape_in) }, m_text{ std::move(_text_in) }{}
+	Button(sf::Text const& _text_in) noexcept : m_text{ _text_in } {}
+	Button(sf::Text&& _text_in) noexcept : m_text{ std::move(_text_in) } {}
 
 	void create_function_call(std::function<void()>)noexcept;
 	void process_events(sf::Event const&);
@@ -88,7 +98,7 @@ private:
 	std::array<sf::Texture, 3> m_filepath{};
 	sf::Vector2f m_current_texture{};
 
-	bool m_toggle{ false };
+	[[maybe_unused]] bool m_toggle{ false };
 	bool m_choose{ false };
 };
 #endif

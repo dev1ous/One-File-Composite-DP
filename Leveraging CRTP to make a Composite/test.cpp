@@ -11,7 +11,7 @@ int main()
 	sf::Texture t;
 	t.loadFromFile("../Ressources/golden.png");
 	//parent
-	Button button(sf::RectangleShape({ 20.f, 20.f }));
+	Button button({ "kiop", font });
 	button.change_default_color(sf::Color::White);
 	//child( my frankestein monster :) dont forget to put a reference if you don't want to slice the object)
 	Button& MartinEstLeMeilleur = button.add("martin", sf::CircleShape(10));
@@ -28,13 +28,13 @@ int main()
 	while (App.isOpen())
 	{
 		for (auto e = sf::Event{}; App.pollEvent(e);) {
-			button.apply_foreach(&Button::process_events, e);
+			button.apply_foreach<&Button::process_events>(e);
 		}
 
 		button.set_color_state(sf::Color::Red, sf::Color::Cyan, sf::Color::Magenta);
 
 		App.clear();
-		button.apply_foreach(&Button::draw, App);
+		button.apply_foreach<&Button::draw>(App);
 		App.display();
 	}
 
