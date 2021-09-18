@@ -1,9 +1,18 @@
 #include "Button.h"
 #include <iostream>
+#include "Object.h"
 //TEST
+class my_class {
+public:
+	my_class(int _x): x(_x){}
+	int x;
+};
 
 int main()
 {
+	std::vector<make> m;
+	m.push_back(my_class{ 1 });
+
 	sf::RenderWindow App(sf::VideoMode(1920, 1080), "");
 
 	sf::Font font;
