@@ -5,36 +5,37 @@
 int main()
 {
 	sf::RenderWindow App(sf::VideoMode(1920, 1080), "");
-
 	sf::Font font;
 	font.loadFromFile("../Ressources/LEMONMILK-Regular.otf");
 	sf::Texture t;
 	t.loadFromFile("../Ressources/golden.png");
-	//parent
-	Button button({ "kiop", font });
-	button.change_default_color(sf::Color::White);
-	//child( my frankestein monster :) dont forget to put a reference if you don't want to slice the object)
-	Button& MartinEstLeMeilleur = button.add("martin", sf::CircleShape(10));
-	MartinEstLeMeilleur.change_default_color(sf::Color::Blue);
 
-	Button& JeSuisTropChaud = button.add("lebossquoi", sf::CircleShape(50));
-	//you can switch color or texture if you hold, click or do nothing with the button. You can also just put 3 same colors to have no particular state switch
-	JeSuisTropChaud.change_default_color(sf::Color::Red);
-	JeSuisTropChaud.set_position({ 800.f,800.f });
+	//Buttons set up
 
-	button.get("martin").set_position({900.f,900.f});
-	button.get("lebossquoi").create_function_call([]() { std::cout << "aurelia" << "\n"; });
+	Button parent({ "parentName", font });
+	parent.change_default_color(sf::Color::White);
+
+	Button& child1 = parent.add("child1Name", sf::CircleShape(10));
+	child1.change_default_color(sf::Color::Blue);
+
+	Button& child2 = parent.add("child2Name", sf::CircleShape(50));
+	//You can switch color or texture if you hold, click or do nothing with the button. You can also just put 3 same colors to have no particular state switch
+	child2.change_default_color(sf::Color::Red);
+	child2.set_position({ 800.f,800.f });
+
+	parent.get("child1Name").set_position({900.f,900.f});
+	parent.get("child2Name").create_function_call([]() { std::cout << "print whatever" << "\n"; });
 
 	while (App.isOpen())
 	{
 		for (auto e = sf::Event{}; App.pollEvent(e);) {
-			button.apply_foreach<&Button::process_events>(e);
+			parent.apply_foreach<&Button::process_events>(e);
 		}
 
-		button.set_color_state(sf::Color::Red, sf::Color::Cyan, sf::Color::Magenta);
+		parent.set_color_state(sf::Color::Red, sf::Color::Cyan, sf::Color::Magenta);
 
 		App.clear();
-		button.apply_foreach<&Button::draw>(App);
+		parent.apply_foreach<&Button::draw>(App);
 		App.display();
 	}
 
