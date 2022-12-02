@@ -23,8 +23,11 @@ int main()
 	child2.change_default_color(sf::Color::Red);
 	child2.set_position({ 800.f,800.f });
 
+	Button& childOfchild1 = child2.add("childOfchild1", sf::CircleShape(30));
+
 	parent.get("child1Name").set_position({900.f,900.f});
 	parent.get("child2Name").create_function_call([]() { std::cout << "print whatever" << "\n"; });
+	child2.get("childOfchild1");
 
 	while (App.isOpen())
 	{

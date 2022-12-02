@@ -6,6 +6,73 @@
 #include <algorithm>
 #include <vector>
 #include <ranges>
+#include <boost/variant2.hpp>
+#include "unordered_dense.h"
+#include <boost/container/flat_map.hpp>
+
+template<typename T>
+class container
+{
+public:
+
+	struct hash
+	{
+		using is_transparent = void;
+		using is_avalanching = void;
+
+		[[nodiscard]] auto operator()(std::string str) const noexcept -> uint64_t
+		{
+			return ankerl::unordered_dense::hash<std::string>{}(str);
+		}
+	};
+
+	[[nodiscard]] friend container::T& operator<<(typename container::T& parent, std::pair<std::string_view, typename container::T>&& child)
+	{
+		this->m_seq.try_emplace(
+			std::forward<decltype(child)::first_type>(child.first),
+			std::forward<decltype(child)::second_type>(child.second));
+
+		return parent;
+	}
+	
+private:
+
+	ankerl::unordered_dense::map<std::string, T, hash, std::equal_to<>, boost::container::flat_map<std::string, T>> m_seq{};
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 template<class _Ty>
 class Container
@@ -103,7 +170,7 @@ inline constexpr auto& Container<_Ty>::get(std::string_view id) const
 template<class _Ty>
 inline constexpr void Container<_Ty>::remove(std::string_view id) noexcept
 {
-	const auto pred = [&](auto const& p) {return p.first == id; };
+	const auto pred = [&](auto const& p) { return p.first == id; };
 	std::erase_if(m_children, pred);
 }
 
