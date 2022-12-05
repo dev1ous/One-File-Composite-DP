@@ -6,42 +6,86 @@
 #include <algorithm>
 #include <vector>
 #include <ranges>
-#include <boost/variant2.hpp>
-#include "unordered_dense.h"
-#include <boost/container/flat_map.hpp>
+#include <ankerl/unordered_dense.h>
+#include <scoped_allocator>
 
-template<typename T>
-class container
+namespace devK 
 {
-public:
-
-	struct hash
+	template<typename T>
+	class recur_t
 	{
-		using is_transparent = void;
-		using is_avalanching = void;
+	public:
 
-		[[nodiscard]] auto operator()(std::string str) const noexcept -> uint64_t
+		using type = T;
+
+		recur_t::type& operator<<(std::tuple<std::string_view, T, size_t> const& other)
 		{
-			return ankerl::unordered_dense::hash<std::string>{}(str);
+			auto [f, s, t] = other;
+
+			m_seq.reserve(t);
+
+			return m_seq.try_emplace(f, std::move(s)).first->second;
 		}
+		recur_t::type& operator<<(std::tuple<std::string_view, T> const& other)
+		{
+			auto [f, s] = other;
+
+			return m_seq.insert(m_seq.end(), std::make_pair(f, s))->second;
+		}
+		/*recur_t::type& operator<<=(boost::hana::tuple<std::string_view, recur_t::type, decltype(N)>&& other)
+		{
+			auto& [f, s, t] = std::forward<decltype(other)>(other);
+
+			m_seq.try_emplace(std::move(f), std::move(s));
+
+			return static_cast<recur_t::type&>(*this);
+		}*/
+
+		void reserve_first(size_t capa)
+		{
+			m_seq.reserve(capa);
+		}
+	protected:
+
+		constexpr recur_t() noexcept = default;
+
+		constexpr recur_t(recur_t const&) noexcept = default;
+		constexpr recur_t& operator=(recur_t const&) noexcept = default;
+
+		constexpr recur_t(recur_t&&) noexcept = default;
+		constexpr recur_t& operator=(recur_t&&) noexcept  = default;
+
+		constexpr ~recur_t() noexcept = default;
+	private:
+
+		struct hash
+		{
+			using is_transparent = void;
+			using is_avalanching = void;
+
+			[[nodiscard]] auto operator()(std::string_view str) const noexcept -> uint64_t
+			{
+				static_assert(std::has_unique_object_representations_v<std::string_view>);
+				return ankerl::unordered_dense::hash<std::string_view>{}(str);
+			}
+		};
+
+		ankerl::unordered_dense::map<
+			std::string, 
+			T, 
+			hash, 
+			std::equal_to<>, 
+			std::vector<
+			std::pair<std::string, T>>>
+			m_seq{};
 	};
+}
 
-	[[nodiscard]] friend container::T& operator<<(typename container::T& parent, std::pair<std::string_view, typename container::T>&& child)
-	{
-		this->m_seq.try_emplace(
-			std::forward<decltype(child)::first_type>(child.first),
-			std::forward<decltype(child)::second_type>(child.second));
 
-		return parent;
-	}
-	
-private:
-
-	ankerl::unordered_dense::map<std::string, T, hash, std::equal_to<>, boost::container::flat_map<std::string, T>> m_seq{};
+struct test : devK::recur_t<test>
+{
+	explicit test() = default;
 };
-
-
-
 
 
 

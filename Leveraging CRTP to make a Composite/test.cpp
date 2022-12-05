@@ -1,5 +1,6 @@
 #include "Button.h"
 #include <iostream>
+
 //TEST
 
 int main()
@@ -9,6 +10,8 @@ int main()
 	font.loadFromFile("../Ressources/LEMONMILK-Regular.otf");
 	sf::Texture t;
 	t.loadFromFile("../Ressources/golden.png");
+	test k, l;
+	k << std::tuple{ "click", l } << std::tuple{ "blob", l, 5 } << std::tuple{ "clang", test{}, 6 };
 
 	//Buttons set up
 
@@ -27,7 +30,6 @@ int main()
 
 	parent.get("child1Name").set_position({900.f,900.f});
 	parent.get("child2Name").create_function_call([]() { std::cout << "print whatever" << "\n"; });
-	child2.get("childOfchild1");
 
 	while (App.isOpen())
 	{
