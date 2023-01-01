@@ -10,8 +10,6 @@ int main()
 	font.loadFromFile("../Ressources/LEMONMILK-Regular.otf");
 	sf::Texture t;
 	t.loadFromFile("../Ressources/golden.png");
-	test k, l;
-	k << std::tuple{ "click", l } << std::tuple{ "blob", l, 5 } << std::tuple{ "clang", test{}, 6 };
 
 	//Buttons set up
 
@@ -43,7 +41,6 @@ int main()
 		parent.apply_foreach<&Button::draw>(App);
 		App.display();
 	}
-
 
 	return 0;
 }
